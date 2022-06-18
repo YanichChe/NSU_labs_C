@@ -1,0 +1,14 @@
+Вход:
+example
+this is simple example
+Выход:
+7 14 13 12 11 10 20 22 21 20 19 18 17 16
+
+Разбор примера:
+example
+------>example
+       ----->example
+            -->example
+this is simple example
+         1         2   позиция в тексте (десятки)
+1234567890123456789012 позиция в тексте (единицы)
