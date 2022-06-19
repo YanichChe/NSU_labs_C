@@ -3,62 +3,81 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+//////////////////////////////////////////
+
 #define MAX_INPUT_LENGHT 18
 #define MAX_SAMPLE_LENGHT 256
 #define _CRT_SECURE_NO_WARNINGS 
 
-void make_sample(int input_len, unsigned char data[], int* sample);
-void search(int input_len, unsigned char data[], int sample[]);
-void input_data(int* input_len, unsigned char* data);
-bool fill_text(int from, int to, unsigned char* text);
+//////////////////////////////////////////
+
+void inputData(int* inputLen, unsigned char* data);
+bool fillText(int from, int to, unsigned char* text);
+
+int createSample(int inputLen);
+void fillSample(int inputLen, unsigned char data[], int* sample);
+void boyerMoore(int inputLen, unsigned char data[], int sample[]);
+
+// MAIN //////////////////////////////////
 
 int main(void) 
 {
-	int input_len = 0;
+	int inputLen = 0;
 	
 	unsigned char data[MAX_INPUT_LENGHT];
-	input_data(&input_len, data);
+	inputData(&inputLen, data);
 
-	int sample[MAX_SAMPLE_LENGHT];
+	int sample = createSample(inputLen);
 
-	for (int i = 0; i < MAX_SAMPLE_LENGHT; i++) {
-		sample[i] = input_len;
-	}
-
-	make_sample(input_len, data, sample);
-	search(input_len, data, sample);
+	fillSample(inputLen, data, sample);
+	boyerMoore(inputLen, data, sample);
 
 	return EXIT_SUCCESS;
 }
 
-void input_data(int* input_len, unsigned char* data)
+// INPUT /////////////////////////////////
+
+void inputData(int* inputLen, unsigned char* data)
 {
-	int int_char;
+	int intChar;
 	int i = 0;
 
-	while ((int_char = getchar()) != '\n') {
-		data[i] = (unsigned char)int_char;
+	while ((intChar = getchar()) != '\n') {
+		data[i] = (unsigned char)intChar;
 		++i;
-		++(*input_len);
+		++(*inputLen);
 	}
 }
 
-void make_sample(int input_len, unsigned char data[], int* sample) 
+int createSample(int inputLen)
 {
-	for (int i = input_len - 2; i >= 0; i--) {
-		if (sample[data[i]] == input_len) {
-			sample[data[i]] = input_len - i - 1;
+	int sample[MAX_SAMPLE_LENGHT];
+
+	for (int i = 0; i < MAX_SAMPLE_LENGHT; i++) {
+		sample[i] = inputLen;
+	}
+
+	return sample;
+}
+
+// FILLING ///////////////////////////////
+
+void fillSample(int inputLen, unsigned char data[], int* sample) 
+{
+	for (int i = inputLen - 2; i >= 0; i--) {
+		if (sample[data[i]] == inputLen) {
+			sample[data[i]] = inputLen - i - 1;
 		}
 	}
 }
 
-bool fill_text(int from, int to, unsigned char* text)
+bool fillText(int from, int to, unsigned char* text)
 {
-	int int_char;
+	int intChar;
 
 	for (int i = from; i < to; i++) {
-		if ((int_char = getchar()) != EOF) {
-			text[i] = (unsigned char)int_char;
+		if ((intChar = getchar()) != EOF) {
+			text[i] = (unsigned char)intChar;
 		}
 		else {
 			return false;
@@ -68,40 +87,36 @@ bool fill_text(int from, int to, unsigned char* text)
 	return true;
 }
 
-void search(int input_len, unsigned char data[], int sample[]) 
+// Boyer Moore ///////////////////////////
+
+void boyerMoore(int inputLen, unsigned char data[], int sample[]) 
 {
 	unsigned char text[MAX_INPUT_LENGHT] = { '0' };
-	int int_char;
+	int intChar;
 
-	if (fill_text(0, input_len, text) == false){
-		return;
-	}
+	if (fillText(0, inputLen, text) == false) return;
 
-	int i = 0;
-	int j = input_len - 1;
-	unsigned char last_char = text[j];
+	int currentPosition = 0;
+	int comparisonPosition = inputLen - 1;
+	unsigned char lastChar = text[comparisonPosition];
 
 	while (1) {
-		printf("%d ", j + i + 1);
+		printf("%d ", comparisonPosition + currentPosition + 1);
 
-		if (text[j] != data[j] || j == 0) {
-			i += sample[last_char];
+		if (text[comparisonPosition] != data[comparisonPosition] || comparisonPosition == 0) {
+			currentPosition += sample[lastChar];
 
-			for (int k = 0; k < input_len - sample[last_char]; k++) {
-				text[k] = text[k + sample[last_char]];
+			for (int i = 0; i < inputLen - sample[lastChar]; i++) {
+				text[i] = text[i + sample[lastChar]];
 			}
 
-			if (fill_text(input_len - sample[last_char], input_len, text) == false){
-				return;
-			}
-
-			j = input_len - 1;
-			last_char = text[j];
+			if (fillText(inputLen - sample[lastChar], inputLen, text) == false) return;
+			
+			comparisonPosition = inputLen - 1;
+			lastChar = text[comparisonPosition];
 		}
 
-		else {
-			j--;
-		}
+		else comparisonPosition--;
 	}
 	return;
 }
