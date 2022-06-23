@@ -47,9 +47,9 @@ void fillSets(Set set[], int numberVertices);
 
 bool Kruskal(Graph *graph, Edge *output);
 
-void freeAll(Graph *graph, Edge *output);
-
 void printOutput(int numberVertices, Edge *output);
+
+void freeAll(Graph *graph, Edge *output);
 
 // MAIN //////////////////////////////////
 
