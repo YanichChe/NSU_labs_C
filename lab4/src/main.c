@@ -41,13 +41,13 @@ int isEmpty(Stack *stack);
 void destroyStack(Stack *stack);
 char getElement(Stack *stack);
 
-int priority(char x);
-bool isOperation(char c);
-void digit(int *in, int *out, unsigned int i, char deck[], char s[], char c);
-bool operation(unsigned int i, char deck[], char s[], Stack *stack, char c);
+int priority(char operationSign);
+bool isOperation(char currentSymbol);
+void digit(int *in, int *out, unsigned int currentIndex, char deck[], char infixForm[], char currentSymbol);
+bool operation(unsigned int currentIndex, char deck[], char infixForm[], Stack *stack, char currentSymbol);
 bool clearStack(Stack* stack, char* deck);
 
-void openBracket(int *in, Stack *stack, char c);
+void openBracket(int *in, Stack *stack, char currentSymbol);
 bool closeBracket(int *in, int *out, Stack *stack, char deck[]);
 
 bool makePolishNotation(char infixForm[], char deck[]);
@@ -197,14 +197,14 @@ bool isOperation(char c)
     return false;
 }
 
-int priority(char x)
+int priority(char operationSign)
 {
-    if (x == '+' || x == '-')
+    if ( operationSign == '+' ||  operationSign == '-')
     {
         return 1;
     }
 
-    else if (x == '/' || x == '*')
+    else if (operationSign == '/' ||  operationSign == '*')
     {
         return 2;
     }
@@ -215,29 +215,29 @@ int priority(char x)
     }
 }
 
-bool operation(unsigned int i, char deck[], char s[], Stack *stack, char c)
+bool operation(unsigned int currentIndex, char deck[], char infixForm[], Stack *stack, char currentSymbol)
 {
-    if (((i + 1) < strlen(s) && isOperation(s[i + 1])) || i + 1 >= strlen(s))
+    if (((currentIndex + 1) < strlen(infixForm) && isOperation(infixForm[currentIndex + 1])) || currentIndex + 1 >= strlen(infixForm))
     {
         destroyStack(stack);
         return false;
     }
 
-    while (priority(getElement(stack)) >= priority(c))
+    while (priority(getElement(stack)) >= priority(currentSymbol))
     {
         deck[strlen(deck)] = pop(stack);
         deck[strlen(deck)] = ' ';
     }
 
-    push(stack, c);
+    push(stack, currentSymbol);
 
     return true;
 }
 
-void openBracket(int *in, Stack *stack, char c)
+void openBracket(int *in, Stack *stack, char currentSymbol)
 {
     *in = 1;
-    push(stack, c);
+    push(stack, currentSymbol);
 }
 
 bool closeBracket(int *in, int *out, Stack *stack, char deck[])
@@ -267,18 +267,18 @@ bool closeBracket(int *in, int *out, Stack *stack, char deck[])
     return true;
 }
 
-void digit(int *in, int *out, unsigned int i, char deck[], char s[], char c)
+void digit(int *in, int *out, unsigned int currentIndex, char deck[], char infixForm[], char currentSymbol)
 {
     if (*in == 1)
     {
         *out = 1;
     }
-    deck[strlen(deck)] = c;
-    if (i + 1 < strlen(s) && (s[i + 1] < '0' || s[i + 1] > '9'))
+    deck[strlen(deck)] = currentSymbol;
+    if (currentIndex + 1 < strlen(infixForm) && (infixForm[currentIndex + 1] < '0' || infixForm[currentIndex + 1] > '9'))
     {
         deck[strlen(deck)] = ' ';
     }
-    else if (i + 1 == strlen(s))
+    else if (currentIndex + 1 == strlen(infixForm))
     {
         deck[strlen(deck)] = ' ';
     }
