@@ -7,7 +7,7 @@
 
 //////////////////////////////////////////
 
-#define CHAR_SIZE 256
+#define CHAR_COUNT 256
 #define BYTE_SIZE 8
 #define INPUT_FILE "in.txt"
 #define OUTPUT_FILE "out.txt"
@@ -199,7 +199,7 @@ FrequenceTable *create_frequency_table(FILE *input_file)
 {
 	FrequenceTable *frequency_table = malloc(sizeof(FrequenceTable));
 
-	int *symbols = calloc(CHAR_SIZE, sizeof(int));
+	int *symbols = calloc(CHAR_COUNT, sizeof(int));
 
 	int size = 0;
 	int number_symbols = 0;
@@ -249,7 +249,7 @@ Node **create_nodes_array(FrequenceTable *frequence_table)
 	Node **nodes_array = malloc(frequence_table->size * sizeof(Node *));
 	int index = 0;
 
-	for (int i = 0; i < CHAR_SIZE; i++)
+	for (int i = 0; i < CHAR_COUNT; i++)
 	{
 		if (frequence_table->symbols[i] != 0)
 		{
@@ -306,11 +306,11 @@ Node *create_tree(FrequenceTable *frequence_table)
 
 unsigned char **generate_code_table()
 {
-	unsigned char **code_table = malloc(CHAR_SIZE * sizeof(char *));
+	unsigned char **code_table = malloc(CHAR_COUNT * sizeof(char *));
 
-	for (int i = 0; i < CHAR_SIZE; i++)
+	for (int i = 0; i < CHAR_COUNT; i++)
 	{
-		code_table[i] = malloc(CHAR_SIZE * sizeof(char));
+		code_table[i] = malloc(CHAR_COUNT * sizeof(char));
 		code_table[i][0] = '\0';
 	}
 
@@ -349,7 +349,7 @@ unsigned char **create_code_table(Node *head)
 {
 	unsigned char **code_table = generate_code_table();
 
-	unsigned char *code = malloc(CHAR_SIZE * sizeof(char));
+	unsigned char *code = malloc(CHAR_COUNT * sizeof(char));
 
 	encode_symbol(code_table, code, head, 0);
 
@@ -569,7 +569,7 @@ void delete_frequency_table(FrequenceTable *frequency_table)
 
 void delete_code_table(unsigned char **code_table)
 {
-	for (int i = 0; i < CHAR_SIZE; i++)
+	for (int i = 0; i < CHAR_COUNT; i++)
 	{
 		free(code_table[i]);
 	}
